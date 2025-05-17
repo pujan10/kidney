@@ -21,14 +21,19 @@ def predict():
     if 'image' not in request.files:
         return jsonify({'error': 'No image uploaded'}), 400
 
-    img = Image.open(request.files['image']).convert('RGB')
-    img = img.resize((224, 224))
-    img_array = np.expand_dims(np.array(img) / 255.0, axis=0)
+    try:
+        img = Image.open(request.files['image']).convert('RGB')
+        img = img.resize((352, 233))  # Resize to match model expectation
+        img_array = np.array(img) / 255.0
+        img_array = img_array.reshape(1, -1)  # Flatten to (1, 246016)
 
-    prediction = model.predict(img_array)
-    predicted_class = labels[np.argmax(prediction)]
+        prediction = model.predict(img_array)
+        predicted_class = labels[np.argmax(prediction)]
 
-    return jsonify({'prediction': predicted_class})
+        return jsonify({'prediction': predicted_class})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
