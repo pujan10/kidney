@@ -23,9 +23,9 @@ def predict():
 
     try:
         img = Image.open(request.files['image']).convert('RGB')
-        img = img.resize((352, 233))  # Resize to match model expectation
+        img = img.resize((256, 256))  # Match model's expected input size
         img_array = np.array(img) / 255.0
-        img_array = img_array.reshape(1, -1)  # Flatten to (1, 246016)
+        img_array = np.expand_dims(img_array, axis=0)  # Shape: (1, 256, 256, 3)
 
         prediction = model.predict(img_array)
         predicted_class = labels[np.argmax(prediction)]
