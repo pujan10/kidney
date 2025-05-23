@@ -14,7 +14,7 @@ labels = ['Cyst', 'Stone', 'Tumor', 'Normal']
 
 @app.route('/')
 def index():
-    return 'Kidney CT Scan Classifier is Running!'
+    return send_file('index.html')  # import send_file from flask
 
 @app.route('/predict', methods=['POST'])
 def predict():
